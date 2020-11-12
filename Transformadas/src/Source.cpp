@@ -1,44 +1,58 @@
-#include<GL/glut.h>
-#include<math.h>
+#define _USE_MATH_DEFINES
+#include <iostream>
+#include <math.h>
+//#include <cmath.h>
+#include <GL/glut.h>
 
-#define nodos 381
-//const int nodos = 381;
+#include "lib/Ventana.h"
+#include "lib/Colores.h"
 
-double movx = 1, movy = 0, trasla = 0;
-double escax = 1.0, escay = 1.0, escala = 0.5;
-double angulo = 0.0, increasing = 30.0, rad = 0.0;
-int ancho = 800, alto = 800;
+#define nodes 168
 
-double M[nodos][3] = { {215,17},{277,7},{361,49},{397,50},{420,78},{433,91},{451,145},{446,194},{495,268},{485,400},{502,489},{534,552},{527,647},{506,715},{482,727},{448,743},{455,755},{439,774},{430,769},{425,778},{412,774},{403,778},{391,768},{377,768},{369,775},{356,770},{351,781},{340,773},{329,779},{311,771},{300,777},{295,750},{238,745},{238,734},{193,743},{146,731},{100,750},{100,767},{128,775},{160,769},{167,801},{86,800},{28,761},{36,739},{50,713},{149,690},{214,690},{189,618},{215,410},{269,330},{264,310},{282,236},{242,230},{226,217},{211,202},{203,198},{200,185},{217,152},{214,129},{225,100},{252,73},{215,17},{252,74},{279,60},{277,6},{347,97},{364,46},{423,86},{433,90},{347,100},{275,63},{281,82},{249,73},{240,99},{225,100},{215,128},{241,131},{242,98},{280,85},{309,108},{280,64},{347,97},{308,108},{240,99},{283,131},{241,131},{216,152},{236,155},{241,131},{262,157},{236,155},{218,153},{218,188},{236,155},{262,157},{218,188},{287,181},{262,157},{283,131},{320,154},{309,108},{338,131},{347,97},{338,131},{388,96},{452,148},{338,131},{320,154},{287,181},{283,131},{287,181},{263,215},{227,216},{283,236},{263,215},{283,236},{287,181},{336,187},{320,154},{338,131},{336,187},{283,236},{311,235},{336,187},{415,142},{447,196},{401,224},{495,266},{391,269},{415,142},{355,237},{336,187},{355,237},{311,235},{283,236},{329,258},{355,237},{391,269},{484,398},{426,384},{391,269},{382,416},{366,376},{391,300},{355,237},{337,302},{283,236},{337,302},{391,300},{337,302},{266,309},{273,489},{213,412},{273,489},{270,500},{188,621},{295,748},{289,738},{303,728},{312,772},{303,728},{338,774},{350,737},{355,772},{371,739},{375,771},{355,772},{338,774},{312,772},{295,776},{303,728},{350,737},{371,739},{365,713},{350,737},{303,728},{365,713},{303,728},{311,673},{365,713},{358,421},{366,376},{337,302},{358,421},{299,370},{280,407},{358,421},{271,446},{316,535},{358,421},{316,535},{362,566},{316,535},{268,519},{316,535},{365,713},{316,535},{311,673},{268,519},{280,407},{299,370},{337,302},{366,376},{372,422},{361,431},{383,462},{380,505},{361,431},{382,415},{371,445},{382,415},{383,462},{380,505},{370,476},{361,491},{380,516},{362,523},{372,543},{380,516},{362,560},{372,577},{380,516},{372,577},{387,562},{372,577},{387,598},{372,577},{366,603},{372,577},{382,638},{366,603},{373,616},{366,635},{373,616},{376,672},{377,680},{368,666},{377,680},{365,713},{377,680},{390,599},{380,516},{382,416},{426,384},{382,416},{429,502},{426,384},{429,502},{470,460},{429,502},{379,514},{429,502},{472,503},{429,502},{430,716},{429,502},{399,727},{388,609},{399,727},{382,655},{390,689},{365,713},{399,727},{376,768},{399,727},{390,769},{411,773},{399,727},{411,773},{429,769},{411,773},{419,728},{430,716}, {440,732}, {419,728}, {429,770}, {440,732}, {443,769}, {429,770},{440,732}, {430,716}, {472,503}, {470,457}, {428,386}, {484,399},{469,456}, {484,399}, {502,488}, {471,505}, {502,488}, {535,552}, {471,505}, {535,552},{430,704}, {523,647}, {482,728}, {432,697}, {431,718}, {449,743},{455,755}, {439,774}, {430,769}, {425,778}, {412,774}, {403,778}, {391,768}, {377,768},{369,775}, {356,770}, {351,781}, {340,773}, {329,779}, {311,771},{300,777}, {295,750}, {238,745}, {238,734}, {214,690}, {238,734}, {149,690}, {193,743},{149,690}, {146,731}, {149,690}, {103,724}, {146,731}, {103,724},{50,713}, {103,724}, {63,724}, {103,724}, {100,750}, {103,724}, {86,743}, {63,724}, {50,713},{63,724}, {36,739}, {63,724}, {28,761}, {63,724}, {91,766},{100,767}, {86,743}, {100,767}, {28,761}, {100,767}, {86,800}, {167,800},{128,775},{160,769},{167,801},{86,800},{28,761},{36,739},{50,713},{149,690},{214,690},{189,618},{215,410},{269,330},{264,310},{282,236},{242,230},{226,217},{211,202},{203,198},{200,185},{217,152},{214,129},{225,100},{252,73},{215,17}, {277,7} };
+//variables de transformacion inicial
+double movX = 0, movY = 0, trasla = 0;
+double esca = 1.0, escala = 0.5;
+double angulo = 0.0;
 
-double M1[nodos][3];
-double M2[nodos][3];
 
-double xc = M[190][0], yc = M[0][190];
-double MaTr[3][3] = { {1,0,0},{0,1,0},{movx, movy, 1} };
-double MaEs[3][3] = { {escax,0,0},{0,escay,0},{0,0,1} };
-double MaRo[3][3] = { {cos(angulo),-sin(angulo),0},{sin(angulo),cos(angulo),0},{0,0,1} };
+int width = 680;
+int height = 680;
 
-void PintarPixel(int x1, int y1, int x2, int y2, int R, int G, int B, int t)
+double M[nodes][3] = { {290, 524}, {285, 541}, {296, 577}, {318, 562}, {326, 547}, {334, 555}, {346, 573}, {355, 545}, {351, 524}, {355, 523}, {400, 480}, {409, 449}, {460, 420}, {472, 414}, {474, 402}, {459, 391}, {457, 383}, {441, 372}, {378, 383}, {345, 350}, {346, 305}, {367, 249}, {370, 182}, {354, 197}, {324, 135}, {300, 144}, {277, 96}, {260, 180}, {232, 178}, {200, 260}, {188, 234}, {164, 334}, {152, 331}, {159, 393}, {144, 402}, {177, 449}, {225, 483}, {211, 492},{290, 524} };
+
+//matrices auxiliares
+double M1[nodes][3];
+double M2[nodes][3];
+
+//matrices de transformacion
+double MaTr[3][3] = { {1,0,movX},{0,1,movY},{0, 0, 1} };
+double MaEs[3][3] = { {esca,0,0},{0,esca,0},{0,0,1} };
+double MaRo[3][3] = { {cos(angulo),-sin(angulo), 1},{sin(angulo),cos(angulo),1 },{0,0,1} };
+
+
+
+Colores mainColores;
+
+void PintarPoligono()
 {
-	glBegin(GL_LINES);
-	glPointSize(t);
-	glColor3f(R, G, B);
-	glVertex2d(x1, y1);
-	glVertex2d(x2, y2);
+	glBegin(GL_POLYGON);
+	glPointSize(1);
+	glColor3fv(mainColores.RGBToFloat(114, 9, 183));
+	for (int i = 0; i < nodes - 1; i++)
+	{
+		glVertex2d(M1[i][0], M1[i][1]);
+	}
 	glEnd();
 	glFlush();
 }
-void PintarPoligono()
-{
-	for (int i = 0; i < (nodos - 2); i++)
-	{
-		PintarPixel(M1[i][0], M1[i][1], M1[i + 1][0], M1[i + 1][1], 1, 1, 1, 1);
-	}
+
+void Display() {
+	PintarPoligono();
 }
+
 void Matrices()
 {
-	for (int i = 0; i < (nodos - 1); i++)
+	for (int i = 0; i < (nodes - 1); i++)
 	{
 		M1[i][0] = M[i][0];
 		M1[i][1] = M[i][1];
@@ -48,16 +62,17 @@ void Matrices()
 		M2[i][2] = M[i][2];
 	}
 }
+
 void Trasf(double m[3][3])
 {
-	for (int j = 0; j < (nodos - 1); j++)
+	for (int j = 0; j < (nodes - 1); j++)
 	{
 		for (int i = 0; i < 3; i++)
 		{
 			M1[j][i] = M2[j][0] * m[0][i] + M2[j][1] * m[1][i] + M2[j][2] * m[2][i];
 		}
 	}
-	for (int j = 0; j < (nodos - 1); j++)
+	for (int j = 0; j < (nodes - 1); j++)
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -65,75 +80,77 @@ void Trasf(double m[3][3])
 		}
 	}
 }
-void Pantalla()
-{
+
+void Redibujar() {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	//gluOrtho2D(-ancho / 2, ancho / 2, -alto / 2, alto / 2);
-	gluOrtho2D(0, ancho, alto, 0);
-	Matrices();
-	Trasf(MaEs);
-	Trasf(MaRo);
-	Trasf(MaTr);
 	PintarPoligono();
 }
-void Teclado(unsigned char key, int x, int y)
-{
-	switch (key)
+
+void Traslacion() {
+	movX = 90;
+	movY = 90;
+	MaTr[0][2] = movX;
+	MaTr[1][2] = movY;
+	Trasf(MaTr);
+	Redibujar();
+}
+
+void Rotar() {
+	for (int i = 0; i < 11; i++)
+	{
+		angulo = (15 * M_PI) / 180;
+		MaRo[0][0] = cos(angulo);
+		MaRo[0][1] = -sin(angulo);
+		MaRo[1][0] = sin(angulo);
+		MaRo[1][1] = cos(angulo);
+	}
+	Trasf(MaRo);
+	Redibujar();
+}
+
+void Teclado(unsigned char k, int x, int y) {
+	if (k == 27) exit(0);
+	switch (k)
 	{
 	case 't':
-		for (int i = 0; i < 15; i++)
-		{
-			movy = movy + trasla;
-		}
-		MaTr[0][3] = movx;
-		MaTr[1][3] = movy;
-		Pantalla();
+		Traslacion();
 		break;
 	case 'r':
-		for (int i = 0; i < 11; i++)
-		{
-			rad = rad + increasing;
-			angulo = (rad * 3.1416) / 180;
-			MaRo[0][0] = cos(angulo);
-			MaRo[0][1] = -sin(angulo);
-			MaRo[0][2] = xc * (1 - cos(angulo)) + (yc * sin(angulo));
-			MaRo[1][0] = sin(angulo);
-			MaRo[1][1] = cos(angulo);
-			MaRo[1][2] = yc * (1 - cos(angulo) - xc * sin(angulo));
-		}
-		Pantalla();
+		Rotar();
 		break;
+
 	case '+':
-		escax = escax + escala;
-		escay = escay + escala;
-		MaEs[0][0] = escax;
-		MaEs[1][1] = escay;
-		MaEs[2][0] = xc - (xc * escax);
-		MaEs[2][1] = yc - (yc + escay);
-		Pantalla();
+		esca = 1.1;
+		MaEs[0][0] = esca;
+		MaEs[1][1] = esca;
+		Trasf(MaEs);
+		Redibujar();
 		break;
 	case '-':
-		escax = escax - escala;
-		escay = escay - escala;
-		MaEs[0][0] = escax;
-		MaEs[1][1] = escay;
-		MaEs[2][0] = xc - (xc * escax);
-		MaEs[2][1] = yc - (yc * escay);
-		Pantalla();
+		esca = 0.9;
+		MaEs[0][0] = esca;
+		MaEs[1][1] = esca;
+		Trasf(MaEs);
+		Redibujar();
+		break;
+	default:
 		break;
 	}
 }
-int main(int argc, char* args[])
-{
-	glutInit(&argc, args);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(ancho, alto);
-	glutInitWindowPosition(300, 0);
-	glutCreateWindow("Gato");
-	glutDisplayFunc(Pantalla);
+
+
+
+int main(int arg, char* argv[]) {
+	Ventana ventana1(arg, *argv); //Objeto encargado de la ventana
+
+	ventana1.bufferSimple("Transformadas 2D", Display, width, height); //creacion de la ventana
+	ventana1.configVentana(13, 6, 40); //Configuracion del color dela ventana
+	ventana1.vistaOrto(1200, 1200);
+
+	std::cout << M_PI;
+	Matrices();
 	glutKeyboardFunc(Teclado);
-	glutMainLoop();
+
+	ventana1.ciclo();
 	return 0;
 }
